@@ -1,0 +1,96 @@
+public class OneTwoThree4 {
+    private static class Foo {
+        private int flag=0;
+        public void one() throws InterruptedException {
+            if(flag!=0){
+                synchronized (this){
+                    wait();
+                }
+                return;
+            }
+            System.out.println("one");
+            flag=1;
+            synchronized (this){
+                notifyAll();
+            }
+        }
+
+        public void two() throws InterruptedException {
+            if(flag!=1){
+                synchronized (this){
+                    wait();
+                }
+                return;
+            }
+            System.out.println("two");
+            flag=2;
+            synchronized (this){
+                notifyAll();
+            }
+        }
+
+        public void three() throws InterruptedException {
+            if(flag!=2){
+                synchronized (this){
+                    wait();
+                }
+                return;
+            }
+            System.out.println("three");
+            flag=0;
+            synchronized (this){
+                notifyAll();
+            }
+        }
+    }
+
+    private static Foo foo = new Foo();
+
+    private static class OneThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    foo.one();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static class TwoThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    foo.two();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static class ThreeThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    foo.three();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Thread one = new OneThread();
+        Thread two = new TwoThread();
+        Thread three = new ThreeThread();
+        one.start();
+        two.start();
+        three.start();
+    }
+}

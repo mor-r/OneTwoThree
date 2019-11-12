@@ -1,0 +1,67 @@
+public class OneTwoThree3 {
+    private static class Foo {
+        private int flag=0;
+        public void one() {
+            if(flag!=0){
+                return;
+            }
+            //下面两句话顺序不能颠倒
+            System.out.println("one");
+            flag=1;
+        }
+
+        public void two() {
+            if(flag!=1){
+                return;
+            }
+            System.out.println("two");
+            flag=2;
+        }
+
+        public void three() {
+            if(flag!=2){
+                return;
+            }
+            System.out.println("three");
+            flag=0;
+        }
+    }
+
+    private static Foo foo = new Foo();
+
+    private static class OneThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                foo.one();
+            }
+        }
+    }
+
+    private static class TwoThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                foo.two();
+            }
+        }
+    }
+
+    private static class ThreeThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                foo.three();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Thread one = new OneThread();
+        Thread two = new TwoThread();
+        Thread three = new ThreeThread();
+        one.start();
+        two.start();
+        three.start();
+    }
+}
